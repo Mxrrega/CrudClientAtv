@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 export default function Inserir() {
 
@@ -12,6 +12,11 @@ export default function Inserir() {
   const [sucesso, setSucesso] = useState("");
 
   async function Cadastro() {
+    if ( !clientName || !clientEmail || !clienteGenere) {
+      Alert.alert('Erro', 'Por Favor, preencha todos os campos.');
+      return;
+    }
+
     await fetch('http://10.139.75.24:5251/api/Clients/InsertClients',{
         method:'POST',
         headers: {
@@ -36,15 +41,14 @@ export default function Inserir() {
     <View style={css.container}>
         { sucesso ? 
         <View style={css.containerCadastro}>
-          <Text>Obrigado por se Cadastrar. Seu cadastro foi realizado com sucesso</Text> 
-          <TouchableOpacity style={css.button} onPress={() => {setSucesso(false)}}>
-            <Text style={css.buttonText}>Voltar</Text>
+          <Text style={css.textCadastro}>Obrigado por se Cadastrar. Seu cadastro foi realizado com sucesso</Text> 
+          <TouchableOpacity style={css.btnCreate} onPress={() => {setSucesso(false), setClientName(''), setClientEmail(''), setClienteGenere('')}}>
+            <Text style={css.btnLoginText}>Voltar</Text>
           </TouchableOpacity>
         </View>
         
         :
-        <>
-      <View style={css.inputContainer}>     
+      <View style={css.editar}>     
         <TextInput
           style={css.input}
           placeholder='Nome Cliente'
@@ -63,11 +67,11 @@ export default function Inserir() {
           value={clienteGenere}
           onChangeText={setClienteGenere}
         />
-      </View>
-      <TouchableOpacity style={css.button} onPress={Cadastro}>
-        <Text style={css.buttonText}>Cadastrar</Text>
+      
+      <TouchableOpacity style={css.btnCreate} onPress={Cadastro}>
+        <Text style={css.btnLoginText}>Cadastrar</Text>
       </TouchableOpacity>
-      </>
+      </View>
 }
       { erro && <Text>Revise Cuidadosamente os campos!</Text>}
     </View>
@@ -77,38 +81,45 @@ export default function Inserir() {
 const css = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#121212', 
+    padding: 16,
   },
   containerCadastro: {
-    width: '100%',
-    marginBottom: 20,
-    marginTop: 40
+    marginTop: 50,
+    backgroundColor: '#333333',
+    borderRadius: 8,
+    padding: 30,
+    marginVertical: 8,
   },
-  inputContainer: {
-    width: '100%',
-    marginBottom: 20,
-    marginTop: 40
+  textCadastro: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginTop: 30,
+  },
+  btnLoginText: {
+    color: '#FFFFFF', 
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  editar: {
+    backgroundColor: '#1E1E1E', 
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 60
   },
   input: {
-    width: '100%',
-    marginBottom: 10,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    backgroundColor: '#333333', 
+    color: '#FFFFFF', 
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 8,
   },
-  button: {
-    width: '100%',
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+  btnCreate: {
+    backgroundColor: '#03DAC9', 
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 4,
+     marginTop: 30
   },
 });
